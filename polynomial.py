@@ -7,11 +7,25 @@ class Polynomial(object):
 	def __repr__(self):
 		s = ""
 		for deg, c in enumerate(self.coeff):
-			if c != 1:
+			if deg == 0:
 				s += str(c)
-			s += "x" + "^" + str(deg)
-			if deg != len(self.coeff) - 1:
+				if len(self.coeff) == 1:
+					return "Polynomial: " + s
+				else:
+					continue
+			if c == 0:
+				continue
+			elif c == 1:
 				s += " + "
+			elif c == -1:
+				s += " - "
+			elif c < 0:
+				s += " - " + str(-c)
+			elif c > 0:
+				s += " + " + str(c)
+			s += "x"
+			if deg != 1:
+				s += "^" + str(deg)
 		return "Polynomial: " + s
 
 	def degree(self):
@@ -33,6 +47,19 @@ class Polynomial(object):
 		coeff1 = self.coeff
 		coeff2 = other.coeff
 		result = [a - b for a, b in zip(coeff1, coeff2)]
+		return Polynomial(*result)
+
+	def __mul__(self, other):
+		coeff1 = self.coeff
+		coeff2 = other.coeff
+		n = self.degree() * other.degree() + 2
+		result = [0] * (n)
+		for i in range(n):
+			for j in range(i+1):
+				try:
+					result[i] += coeff1[j] * coeff2[i - j]
+				except IndexError as e:
+					pass
 		return Polynomial(*result)
 
 f = Polynomial(1, 1, 41)
