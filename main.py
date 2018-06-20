@@ -1,4 +1,4 @@
-from parse import lex
+from lex import lex
 
 if __name__ == "__main__":
 	s = ""
