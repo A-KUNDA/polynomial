@@ -14,6 +14,7 @@ token_exprs = [
 	(r'-',                     RESERVED),
 	(r'\*',                    RESERVED),
 	(r'/',                     RESERVED),
+	(r'\^',                    RESERVED),
 	(r'\d+(\.\d+)?',           NUM),
 	(r'\w',                    ID),
 ]
@@ -41,5 +42,5 @@ def lex_e(expr, token_exprs):
 			sys.exit(1)
 		else:
 			pos = match.end(0)
-	#print(tokens)
+	print(tokens)
 	return tokens
