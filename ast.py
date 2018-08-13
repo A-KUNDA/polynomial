@@ -20,6 +20,9 @@ class IntMexp(Mexp):
 	def __repr__(self):
 		return "IntMexp(" + str(self.i) + ")"
 
+	def eval(self, env):
+		return self.i
+
 class VarMexp(Mexp):
 	"""
 	Class for variables
@@ -29,6 +32,12 @@ class VarMexp(Mexp):
 
 	def __repr__(self):
 		return "VarMexp(" + name ")"
+
+	def eval(self, env):
+		if self.name in env:
+			return env[self.name]
+		else:
+			return 0
 
 class BinopMexp(Mexp):
 	"""
@@ -42,6 +51,21 @@ class BinopMexp(Mexp):
 	def __repr__(self):
 		return "BinopMexp(" + self.op + ", " + self.left + ", " + self.right ")"
 
+	def eval(self, env):
+		left_value = self.left.eval(env)
+		right_value = self.right.eval(env)
+		if self.op == "+":
+			value = left_value + right_value
+		elif self.op == "-":
+			value = left_value - right_value
+		elif self.op == "*":
+			value = left_value * right_value
+		elif self.op == "/":
+			value = left_value / right_value
+		else:
+			raise RuntimeError("Unknown operator: " + self.op)
+		return value
+
 class AssignStatement(Equality):
 	"""
 	Class for assignments
@@ -49,3 +73,7 @@ class AssignStatement(Equality):
 	def __init__(self, name, mexp):
 		self.name = name
 		self.mexp = mexp
+
+	def eval(self, env):
+		value = self.mexp.eval(env)
+		env[self.name] = value
