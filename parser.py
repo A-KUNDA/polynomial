@@ -1,3 +1,7 @@
+RESERVED = "RESERVED"
+NUM = "NUM"
+ID = "ID"
+
 class Result(object):
 	
 	def __init__(self, value, pos):
@@ -121,3 +125,15 @@ class Lazy(Parser):
 		if not self.parser:
 			self.parser = self.parser_fnc()
 		return self.parse(tokens, pos)
+
+class Phrase(Parser):
+
+	def __init__(self, parser):
+		self.parser = parser
+
+	def __call__(self, tokens, pos):
+		result = self.parser(tokens, pos)
+		if result and result.pos == len(tokens):
+			return result
+		else:
+			return None
