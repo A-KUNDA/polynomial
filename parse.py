@@ -25,8 +25,8 @@ class Parser(object):
 	def __or__(self, other):
 		return Alternate(self, other)
 
-	def __xor__(self, other):
-		return Process(self, other)
+	def __xor__(self, fnc):
+		return Process(self, fnc)
 
 class Reserved(Parser):
 
@@ -137,3 +137,6 @@ class Phrase(Parser):
 			return result
 		else:
 			return None
+
+iD = Tag(ID)
+num = Tag(NUM) ^ (lambda i: int(i))

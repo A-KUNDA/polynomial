@@ -2,10 +2,11 @@
 Abstract Syntax Tree
 """
 
-from equality import *
-from parser import *
+from functools import reduce
+from parse import *
 
-class Mexp(Equality):
+
+class Mexp(object):
 	"""
 	Class for mathematical expressions
 	"""
@@ -32,7 +33,7 @@ class VarMexp(Mexp):
 		self.name = name
 
 	def __repr__(self):
-		return "VarMexp(" + name ")"
+		return "VarMexp(" + name + ")"
 
 	def eval(self, env):
 		if self.name in env:
@@ -50,7 +51,7 @@ class BinopMexp(Mexp):
 		self.right = right
 
 	def __repr__(self):
-		return "BinopMexp(" + self.op + ", " + self.left + ", " + self.right ")"
+		return "BinopMexp(" + repr(self.op) + ", " + repr(self.left) + ", " + repr(self.right) + ")"
 
 	def eval(self, env):
 		left_value = self.left.eval(env)
@@ -67,7 +68,7 @@ class BinopMexp(Mexp):
 			raise RuntimeError("Unknown operator: " + self.op)
 		return value
 
-class AssignStatement(Equality):
+class AssignStatement(object):
 	"""
 	Class for assignments
 	"""
@@ -81,9 +82,6 @@ class AssignStatement(Equality):
 
 def keyword(kw):
 	return Reserved(kw, RESERVED)
-
-iD = Tag(ID)
-num = Tag(NUM) ^ (lambda i: int(i))
 
 def mexp_value():
 	return (num ^ (lambda i: IntMexp(i))) | (iD ^ (lambda v: VarMexp(v)))
@@ -118,3 +116,24 @@ def precedence(value_parser, precedence_levels, combine):
 
 def mexp():
 	return precedence(mexp_term(), mexp_precedence_levels, process_binop)
+
+def assign_stmt():
+	def process(parsed):
+		((name, _), exp) = parsed
+		return AssignStatement(name, exp)
+	return iD + keyword("=") + mexp ^ process
+
+def stmt():
+	return assign_stmt()
+
+def stmt_list():
+	separator = keyword(";") ^ (lambda x: lambda l, r: l * r)
+	return Exp(stmt(), separator)
+
+def parser():
+	return Phrase(stmt_list())
+
+def parse(tokens):
+	#ast = parser()(tokens, 0)
+	ast = mexp()(tokens, 0)
+	return ast
