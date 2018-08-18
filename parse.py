@@ -124,7 +124,7 @@ class Lazy(Parser):
 	def __call__(self, tokens, pos):
 		if not self.parser:
 			self.parser = self.parser_fnc()
-		return self.parse(tokens, pos)
+		return self.parser(tokens, pos)
 
 class Phrase(Parser):
 
