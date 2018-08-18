@@ -20,7 +20,7 @@ class IntMexp(Mexp):
 		self.i = i
 
 	def __repr__(self):
-		return "IntMexp(" + str(self.i) + ")"
+		return f"IntMexp({self.i})"
 
 	def eval(self, env):
 		return self.i
@@ -33,7 +33,7 @@ class VarMexp(Mexp):
 		self.name = name
 
 	def __repr__(self):
-		return "VarMexp(" + name + ")"
+		return f"VarMexp({self.name})"
 
 	def eval(self, env):
 		if self.name in env:
@@ -51,7 +51,7 @@ class BinopMexp(Mexp):
 		self.right = right
 
 	def __repr__(self):
-		return "BinopMexp(" + repr(self.op) + ", " + repr(self.left) + ", " + repr(self.right) + ")"
+		return f"BinopMexp({self.op}, {self.left}, {self.right})"
 
 	def eval(self, env):
 		left_value = self.left.eval(env)

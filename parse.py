@@ -9,7 +9,7 @@ class Result(object):
 		self.pos = pos
 
 	def __repr__(self):
-		return "Result(" + str(self.value) + "," + str(self.pos) + ")"
+		return f"Result({self.value}, {self.pos})"
 
 class Parser(object):
 

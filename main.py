@@ -3,9 +3,9 @@ from lex import lex
 from ast import parse
 
 if __name__ == "__main__":
-	s = ""
+	text = ""
 	print("Type 'exit' to stop")
-	while (s.lower() != "exit"):
+	while (text.lower() != "exit"):
 		text = input("> ")
 		tokens = lex(text)
 		print(tokens)
