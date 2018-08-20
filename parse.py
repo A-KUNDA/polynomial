@@ -139,4 +139,7 @@ class Phrase(Parser):
 			return None
 
 iD = Tag(ID)
-num = Tag(NUM) ^ (lambda i: int(i))
+
+# used to say int(i) instead
+# implement dynamic typing if worth it
+num = Tag(NUM) ^ (lambda i: float(i))

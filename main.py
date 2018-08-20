@@ -4,13 +4,15 @@ from ast import parse
 
 if __name__ == "__main__":
 	text = ""
-	print("Type 'exit' to stop")
-	while (text.lower() != "exit"):
+	print("Type 'exit' or 'quit' to stop")
+	while (True):
 		text = input("> ")
+		if text.lower() in ("exit", "quit"):
+			break
 		tokens = lex(text)
-		print(tokens)
+		#print(tokens)
 		parse_result = parse(tokens)
-		print(parse_result)
+		#print(parse_result)
 		if not parse_result:
 			sys.stderr.write("Parse Error!\\n")
 			sys.exit(1)

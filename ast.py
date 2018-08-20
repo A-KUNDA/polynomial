@@ -41,9 +41,30 @@ class VarMexp(Mexp):
 		else:
 			return 0
 
+class UnopMexp(Mexp):
+	"""
+	Class for unary operations on the left
+	-
+	"""
+	def __init__(self, op, operand):
+		self.op = op
+		self.operand = operand
+
+	def __repr(self):
+		return f"UnopMexp({self.op}, {self.operand})"
+
+	def eval(self, env):
+		right_value = self.right.eval(env)
+		if self.op == "-":
+			value = - right_value
+		else:
+			raise RuntimeError(f"Unknown operator: {self.op}")
+		return value
+
 class BinopMexp(Mexp):
 	"""
 	Class for binary operations
+	+, -, *, /, ^
 	"""
 	def __init__(self, op, left, right):
 		self.op = op
@@ -64,8 +85,12 @@ class BinopMexp(Mexp):
 			value = left_value * right_value
 		elif self.op == "/":
 			value = left_value / right_value
+		elif self.op == "^":
+			value = left_value ** right_value
+		elif self.op == ".":
+			value = float(str(left_value) + "." + str(right_value))
 		else:
-			raise RuntimeError("Unknown operator: " + self.op)
+			raise RuntimeError(f"Unknown operator: {self.op}")
 		return value
 
 class AssignStatement(object):
@@ -96,6 +121,9 @@ def mexp_group():
 def mexp_term():
 	return mexp_value() | mexp_group()
 
+def process_unop(op):
+	return lambda x: UnopMexp(op, x)
+
 def process_binop(op):
 	return lambda l, r: BinopMexp(op, l, r)
 
@@ -104,7 +132,7 @@ def any_operator_in_list(ops):
 	parser = reduce(lambda l, r: l | r, op_parsers)
 	return parser
 
-mexp_precedence_levels = [["*", "/"], ["+", "-"]]
+mexp_precedence_levels = [["."], ["^"], ["*", "/"], ["+", "-"]]
 
 def precedence(value_parser, precedence_levels, combine):
 	def op_parser(precedence_level):
