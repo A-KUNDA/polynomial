@@ -140,6 +140,5 @@ class Phrase(Parser):
 
 iD = Tag(ID)
 
-# used to say int(i) instead
-# implement dynamic typing if worth it
-num = Tag(NUM) ^ (lambda i: float(i))
+# modify to handle complex numbers
+num = Tag(NUM) ^ (lambda i: int(i) if float(i).is_integer() else float(i))
