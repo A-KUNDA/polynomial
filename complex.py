@@ -26,7 +26,7 @@ class Complex_Number(object):
 		b = self.real*other.imag + self.imag*other.real
 		return Complex_Number(a, b)
 
-	def __div__(self, other):
+	def __truediv__(self, other):
 		z = self * other.conj()
 		a = z.real / other.norm()
 		b = z.imag / other.norm()
@@ -35,5 +35,5 @@ class Complex_Number(object):
 	def norm(self):
 		return self.real**2 + self.imag**2
 
-	def conj*self(self):
+	def conj(self):
 		return Complex_Number(self.real, -self.imag)

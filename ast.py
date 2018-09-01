@@ -4,7 +4,7 @@ Abstract Syntax Tree
 
 from functools import reduce
 from parse import *
-
+import operator
 
 class Mexp(object):
 	"""
@@ -16,8 +16,11 @@ class IntMexp(Mexp):
 	"""
 	Class for numbers
 	"""
-	def __init__(self, i):
-		self.i = i
+	def __init__(self, i, sign="+"):
+		if sign == "-":
+			self.i = -i
+		elif sign == "+":
+			self.i = i
 
 	def __repr__(self):
 		return f"IntMexp({self.i})"
@@ -44,7 +47,7 @@ class VarMexp(Mexp):
 class UnopMexp(Mexp):
 	"""
 	Class for unary operations on the left
-	-
+	+, -
 	"""
 	def __init__(self, op, operand):
 		self.op = op
@@ -57,6 +60,8 @@ class UnopMexp(Mexp):
 		right_value = self.right.eval(env)
 		if self.op == "-":
 			value = - right_value
+		elif self.op == "+":
+			value = right_value
 		else:
 			raise RuntimeError(f"Unknown operator: {self.op}")
 		return value
@@ -66,6 +71,15 @@ class BinopMexp(Mexp):
 	Class for binary operations
 	+, -, *, /, ^
 	"""
+	binops = {
+		"+": operator.add,
+		"-": operator.sub,
+		"*": operator.mul,
+		"/": operator.truediv,
+		"^": operator.pow,
+		".": lambda l, r: float(str(l) + "." + str(r))
+		}
+
 	def __init__(self, op, left, right):
 		self.op = op
 		self.left = left
@@ -77,18 +91,8 @@ class BinopMexp(Mexp):
 	def eval(self, env):
 		left_value = self.left.eval(env)
 		right_value = self.right.eval(env)
-		if self.op == "+":
-			value = left_value + right_value
-		elif self.op == "-":
-			value = left_value - right_value
-		elif self.op == "*":
-			value = left_value * right_value
-		elif self.op == "/":
-			value = left_value / right_value
-		elif self.op == "^":
-			value = left_value ** right_value
-		elif self.op == ".":
-			value = float(str(left_value) + "." + str(right_value))
+		if self.op in self.binops:
+			value = self.binops[self.op](left_value, right_value)
 		else:
 			raise RuntimeError(f"Unknown operator: {self.op}")
 		return value
@@ -126,6 +130,12 @@ def process_unop(op):
 
 def process_binop(op):
 	return lambda l, r: BinopMexp(op, l, r)
+
+def process_op(op):
+	if op == "-":
+		return process_unop(op)()
+	else:
+		return process_binop(op)()
 
 def any_operator_in_list(ops):
 	op_parsers = [keyword(op) for op in ops]
