@@ -37,31 +37,49 @@ class Polynomial(object):
 			res += coeff * num**deg
 		return res
 
+	def __neg__(self):
+		return Polynomial(*[-c for c in self.coeff])
+
 	def __add__(self, other):
-		coeff1 = self.coeff
-		coeff2 = other.coeff
-		result = [a + b for a, b in zip(coeff1, coeff2)]
+		if not isinstance(other, Polynomial):
+			result = list(self.coeff)
+			result[0] += other
+		else:
+			result = [a + b for a, b in zip(self.coeff, other.coeff)]
 		return Polynomial(*result)
+
+	def __radd__(self, other):
+		return self.__add__(other)
 
 	def __sub__(self, other):
-		coeff1 = self.coeff
-		coeff2 = other.coeff
-		result = [a - b for a, b in zip(coeff1, coeff2)]
-		return Polynomial(*result)
+		return self + -other
+
+	def __rsub__(self, other):
+		return -self.__sub__(other)
 
 	def __mul__(self, other):
-		coeff1 = self.coeff
-		coeff2 = other.coeff
+		if not isinstance(other, Polynomial):
+			return Polynomial(*[other * c for c in self.coeff])
 		n = self.degree() * other.degree() + 2
 		result = [0] * (n)
 		for i in range(n):
 			for j in range(i+1):
 				try:
-					result[i] += coeff1[j] * coeff2[i - j]
+					result[i] += self.coeff[j] * other.coeff[i - j]
 				except IndexError as e:
 					pass
 		return Polynomial(*result)
 
-f = Polynomial(1, 1, 41)
-g = Polynomial(1, 2, 3)
-print(f(2))
+	def __rmul__(self, other):
+		return self.__mul__(other)
+
+	def __pow__(self, other):
+		if isinstance(other, Polynomial):
+			raise TypeError("Polynomial exponents are not supported")
+		else:
+			if other == 1:
+				return self
+			elif other % 2 == 0:
+				return (self*self)**(other // 2)
+			else:
+				return self * (self*self)**((other - 1) // 2)

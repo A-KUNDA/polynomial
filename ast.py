@@ -1,10 +1,10 @@
 """
 Abstract Syntax Tree
 """
-
+import operator
 from functools import reduce
 from parse import *
-import operator
+from polynomial import Polynomial
 
 class Mexp(object):
 	"""
@@ -42,7 +42,7 @@ class VarMexp(Mexp):
 		if self.name in env:
 			return env[self.name]
 		else:
-			return 0
+			return Polynomial(0, 1)
 
 class UnopMexp(Mexp):
 	"""

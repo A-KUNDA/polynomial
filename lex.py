@@ -43,4 +43,5 @@ def lex_e(expr, token_exprs):
 			sys.exit(1)
 		else:
 			pos = match.end(0)
+	#print(tokens)
 	return tokens

@@ -18,4 +18,6 @@ if __name__ == "__main__":
 			sys.exit(1)
 		ast = parse_result.value
 		env = {}
+		#print(parse_result)
+		#print(ast)
 		print(ast.eval(env))
