@@ -45,7 +45,12 @@ class Polynomial(object):
 			result = list(self.coeff)
 			result[0] += other
 		else:
-			result = [a + b for a, b in zip(self.coeff, other.coeff)]
+			c, o = list(self.coeff), list(other.coeff)
+			if len(c) < len(o):
+				c.extend([0] * (len(o) - len(c)))
+			elif len(c) > len(o):
+				o.extend([0] * (len(c) - len(o)))
+			result = [a + b for a, b in zip(c, o)]
 		return Polynomial(*result)
 
 	def __radd__(self, other):

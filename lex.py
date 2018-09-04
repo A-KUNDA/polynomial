@@ -1,5 +1,5 @@
 import sys
-from re import compile
+from re import compile, sub, X
 
 RESERVED = "RESERVED"
 NUM = "NUM"
@@ -24,6 +24,11 @@ def lex(expr):
 	return lex_e(expr, token_exprs)
 
 def lex_e(expr, token_exprs):
+
+	# infer multiplication signs
+	# e.g. 5(1 - 10x) -> 5*(1 - 10*x)
+	expr = sub(r'(?<=\w|\))(?=\() | (?<=\))(?=\w) | (?<=\d)(?=x)', '*', expr, flags=X)
+
 	pos = 0
 	tokens = []
 	while pos < len(expr):
